@@ -1,0 +1,23 @@
+import string
+
+def word_frequency(text):
+    # Convert to lowercase
+    text = text.lower()
+    
+    # Remove punctuation
+    translator = str.maketrans('', '', string.punctuation)
+    text = text.translate(translator)
+    
+    # Split into words
+    words = text.split()
+    
+    # Count frequencies
+    freq_dict = {}
+    for word in words:
+        freq_dict[word] = freq_dict.get(word, 0) + 1
+        
+    return freq_dict
+
+# Test the function
+input_string = "Hello, hello! How are you? Are you okay?"
+print(word_frequency(input_string))
