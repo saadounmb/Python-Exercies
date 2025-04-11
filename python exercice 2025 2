@@ -1,0 +1,17 @@
+def secret_translate(text: str) -> str:
+    vowels = {'a', 'e', 'i', 'o', 'u'}
+    symbols = ['#', '$', '%', '&', '*']
+    result = []
+
+    for char in text:
+        if not char.isalpha():
+            continue  # skip spaces or punctuation
+        pos = ord(char) - ord('a') + 1  # alphabetical position (a=1, b=2, ..., z=26)
+
+        if char in vowels:
+            result.append(f"@{pos}")
+        else:
+            symbol = symbols[pos % len(symbols)]
+            result.append(f"Z{symbol}")
+
+    return ''.join(result)
