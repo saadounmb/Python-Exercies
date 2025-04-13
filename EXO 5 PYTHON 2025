@@ -1,0 +1,51 @@
+import itertools
+from fractions import Fraction
+
+def generate_expressions(numbers):
+    if len(numbers) == 1:
+        yield (numbers[0], str(numbers[0]))
+        return
+
+    for i in range(1, len(numbers)):
+        left_parts = numbers[:i]
+        right_parts = numbers[i:]
+
+        for left_val, left_expr in generate_expressions(left_parts):
+            for right_val, right_expr in generate_expressions(right_parts):
+                # Add
+                yield (left_val + right_val, f"({left_expr} + {right_expr})")
+                # Subtract
+                yield (left_val - right_val, f"({left_expr} - {right_expr})")
+                yield (right_val - left_val, f"({right_expr} - {left_expr})")
+                # Multiply
+                yield (left_val * right_val, f"({left_expr} * {right_expr})")
+                # Divide
+                if right_val != 0 and left_val % right_val == 0:
+                    yield (left_val // right_val, f"({left_expr} / {right_expr})")
+                if left_val != 0 and right_val % left_val == 0:
+                    yield (right_val // left_val, f"({right_expr} / {left_expr})")
+
+
+def countdown_solver(numbers, target):
+    seen = set()
+    results = set()
+
+    for perm in itertools.permutations(numbers):
+        for result, expr in generate_expressions(list(perm)):
+            if result == target and expr not in seen:
+                seen.add(expr)
+                results.add(f"{expr} = {target}")
+    return results
+
+
+# Example usage
+numbers = [25, 100, 9, 3, 7]
+target = 812
+
+solutions = countdown_solver(numbers, target)
+
+for s in sorted(solutions):
+    print(s)
+
+if not solutions:
+    print("No exact solution found.")
