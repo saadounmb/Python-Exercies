@@ -1,0 +1,57 @@
+from collections import deque
+
+def knight_shortest_path(N, start, end):
+    """Returns the minimum number of moves a knight needs to reach the target."""
+    moves = [
+        (2, 1), (1, 2), (-1, 2), (-2, 1),
+        (-2, -1), (-1, -2), (1, -2), (2, -1)
+    ]
+
+    visited = [[False for _ in range(N)] for _ in range(N)]
+    queue = deque([(start[0], start[1], 0)])  # (x, y, moves)
+    visited[start[0]][start[1]] = True
+
+    while queue:
+        x, y, depth = queue.popleft()
+        if (x, y) == end:
+            return depth
+
+        for dx, dy in moves:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < N and 0 <= ny < N and not visited[nx][ny]:
+                visited[nx][ny] = True
+                queue.append((nx, ny, depth + 1))
+
+    return -1  # If unreachable (shouldn't happen on an open board)
+
+
+def knight_shortest_path_with_trace(N, start, end):
+    """Returns the actual path the knight takes to reach the target."""
+    moves = [
+        (2, 1), (1, 2), (-1, 2), (-2, 1),
+        (-2, -1), (-1, -2), (1, -2), (2, -1)
+    ]
+
+    visited = [[False for _ in range(N)] for _ in range(N)]
+    parent = dict()
+    queue = deque([start])
+    visited[start[0]][start[1]] = True
+    parent[start] = None
+
+    while queue:
+        x, y = queue.popleft()
+        if (x, y) == end:
+            path = []
+            while (x, y) is not None:
+                path.append((x, y))
+                x, y = parent[(x, y)] if parent[(x, y)] else (None, None)
+            return path[::-1]
+
+        for dx, dy in moves:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < N and 0 <= ny < N and not visited[nx][ny]:
+                visited[nx][ny] = True
+                parent[(nx, ny)] = (x, y)
+                queue.append((nx, ny))
+
+    return []  # No path
